@@ -4,7 +4,7 @@ import org.apache.flink.api.common.operators.base.ReduceOperatorBase.CombineHint
 import org.apache.flink.api.scala._
 
 /** Compute the largest length per group. */
-object FlinkLargestLength {
+object WorkloadA {
 
   def main(args: Array[String]) {
     if (args.length != 3) {
@@ -29,10 +29,10 @@ object FlinkLargestLength {
       .readCsvFile[(Long, String)](inputPath)
       .map{kv => (kv._1, kv._2.length)}
       .groupBy(0)
-      .reduce((x: (Long, Int), y: (Long, Int)) => (x._1, Math.max(x._2, y._2)), combineHint)
+      .reduce((x, y) => (x._1, Math.max(x._2, y._2)), combineHint)
       .writeAsCsv(outputPath)
 
-    env.execute("flink-hashagg-largest-length")
+    env.execute("WorkloadA")
   }
 
 }

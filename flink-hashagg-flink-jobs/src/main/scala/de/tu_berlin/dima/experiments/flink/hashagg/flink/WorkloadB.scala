@@ -4,7 +4,7 @@ import org.apache.flink.api.common.operators.base.ReduceOperatorBase.CombineHint
 import org.apache.flink.api.scala._
 
 /** Get the largest value per group based on lexicographic ordering. */
-object FlinkLargestLexic {
+object WorkloadB {
 
   def main(args: Array[String]) {
     if (args.length != 3) {
@@ -31,7 +31,7 @@ object FlinkLargestLexic {
       .reduce((x, y) => (x._1, if (x._2 > y._2) x._2 else y._2), combineHint)
       .writeAsCsv(outputPath)
 
-    env.execute("flink-hashagg-largest-lexic")
+    env.execute("WorkloadB")
   }
 
 }
