@@ -9,4 +9,8 @@ Please check
 * the [Peel Webpage](http://peel-framework.org/) for more information how to execute the experiments yourself.
 
 
+# Building
 
+The bundle depends on a custom build on Flink tailored towards benchmarking [FLINK-3477](https://issues.apache.org/jira/browse/FLINK-3477).
+The version is located at [the Stratosphere Fork of Flink](https://github.com/stratosphere/flink/tree/v1.1-FLINK-3477).
+The binary for the build can be found [on the repository releases page](https://github.com/stratosphere/flink/releases/tag/v1.1-FLINK-3477).
