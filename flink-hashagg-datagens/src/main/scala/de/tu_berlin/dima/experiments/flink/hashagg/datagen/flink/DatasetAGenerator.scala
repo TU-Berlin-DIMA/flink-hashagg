@@ -6,7 +6,7 @@ import org.apache.flink.api.scala._
 import org.apache.flink.core.fs.FileSystem
 import org.apache.flink.util.NumberSequenceIterator
 
-object KeyValuePairsGenerator {
+object DatasetAGenerator {
 
   val SEED = 0xC00FFEE
   val SIZE_OF_DICTIONARY = 1000000
