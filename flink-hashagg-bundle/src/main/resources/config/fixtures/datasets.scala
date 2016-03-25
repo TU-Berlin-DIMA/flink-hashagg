@@ -26,7 +26,7 @@ class datasets extends ApplicationContextAware {
   // Data Generators
   // ---------------------------------------------------
 
-  def `dagagen.A`(distribution: String): FlinkJob = new FlinkJob(
+  def `datagen.A`(distribution: String): FlinkJob = new FlinkJob(
     runner  = ctx.getBean("flink-1.1-FLINK-3477", classOf[Flink]),
     command =
       s"""
@@ -42,15 +42,15 @@ class datasets extends ApplicationContextAware {
 
   @Bean(name = Array("datagen.A.uniform"))
   def `datagen.A.uniform`: FlinkJob =
-    `dagagen.A`("Uniform")
+    `datagen.A`("Uniform")
 
   @Bean(name = Array("datagen.A.binomial"))
   def `datagen.A.binomial`: FlinkJob =
-    `dagagen.A`("Binomial[0.5]")
+    `datagen.A`("Binomial[0.5]")
 
   @Bean(name = Array("datagen.A.zipf"))
   def `datagen.A.zipf`: FlinkJob =
-    `dagagen.A`("Zipf[1]")
+    `datagen.A`("Zipf[1]")
 
   // ---------------------------------------------------
   // Data Sets
