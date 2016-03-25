@@ -45,7 +45,7 @@ object DatasetAGenerator {
       // write result to file
       .writeAsText(outputPath, FileSystem.WriteMode.OVERWRITE)
 
-    environment.execute(s"KeyValuePairsGenerator[$numberOfPairs]")
+    environment.execute(s"KeyValuePairsGenerator[$numberOfPairs][$keyCardinality][${args(3)}]")
   }
 
   object Patterns {
