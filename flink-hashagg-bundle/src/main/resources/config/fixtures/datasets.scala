@@ -33,7 +33,7 @@ class datasets extends ApplicationContextAware {
         |-v -c de.tu_berlin.dima.experiments.flink.hashagg.datagen.flink.DatasetAGenerator  \\
         |$${app.path.datagens}/flink-hashagg-datagens-1.0-SNAPSHOT.jar                      \\
         |$${system.default.config.parallelism.total}                                        \\
-        |1000000                                                                            \\
+        |10000000                                                                           \\
         |100000                                                                             \\
         |$distribution                                                                      \\
         |$${system.hadoop-2.path.input}/dataset-A.${distribution.split('[')(0).toLowerCase}
