@@ -4,9 +4,7 @@ import de.tu_berlin.dima.experiments.flink.hashagg.datagen.util.RanHash
 
 class Dictionary (seed : Long, size : Int) extends Iterable[String] {
 
-  val MIN_LENGTH = 10
-  val MAX_LENGTH = 20
-  val NUM_CHARACTERS = 26
+  import Dictionary._
 
   private val random : RanHash = new RanHash(seed)
 
@@ -26,4 +24,10 @@ class Dictionary (seed : Long, size : Int) extends Iterable[String] {
   }
 
   def words () : Array[String] = (0 until size).map(i => word(i)).toArray
+}
+
+object Dictionary {
+  val MIN_LENGTH = 10
+  val MAX_LENGTH = 20
+  val NUM_CHARACTERS = 26
 }

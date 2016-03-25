@@ -28,9 +28,6 @@ object DatasetAGenerator {
 
     val numberOfPairs   = numberOfTasks * tuplesPerTask
 
-    // generate dictionary of random words
-    val dictionary = new Dictionary(SEED, SIZE_OF_DICTIONARY).words()
-
     val environment = ExecutionEnvironment.getExecutionEnvironment
 
     environment
@@ -40,12 +37,11 @@ object DatasetAGenerator {
       .setParallelism(numberOfTasks)
       // map every n <- [1 .. N] to a random word sampled from a word list and a key
       .map(i => {
-        val r = new RanHash(SEED + 2 * i)
+        val r = new RanHash(SEED + SIZE_OF_DICTIONARY * Dictionary.MAX_LENGTH + 2 * i)
         val k = keyDistribution.sample(r.next())
-        val v = dictionary(valDistribution.sample(r.next()))
+        val v = new Dictionary(SEED, SIZE_OF_DICTIONARY).word(valDistribution.sample(r.next()))
         s"$k,$v"
       })
-      .setParallelism(numberOfTasks)
       // write result to file
       .writeAsText(outputPath, FileSystem.WriteMode.OVERWRITE)
 
