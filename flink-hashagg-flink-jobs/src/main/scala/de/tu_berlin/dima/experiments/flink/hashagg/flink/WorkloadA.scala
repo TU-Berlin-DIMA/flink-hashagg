@@ -2,6 +2,7 @@ package de.tu_berlin.dima.experiments.flink.hashagg.flink
 
 import org.apache.flink.api.common.operators.base.ReduceOperatorBase.CombineHint
 import org.apache.flink.api.scala._
+import org.apache.flink.core.fs.FileSystem
 
 /** Compute the largest length per group. */
 object WorkloadA {
@@ -30,7 +31,7 @@ object WorkloadA {
       .map{kv => (kv._1, kv._2.length)}
       .groupBy(0)
       .reduce((x, y) => (x._1, Math.max(x._2, y._2)), combineHint)
-      .writeAsCsv(outputPath)
+      .writeAsCsv(outputPath, writeMode = FileSystem.WriteMode.OVERWRITE)
 
     env.execute("WorkloadA")
   }
