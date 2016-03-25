@@ -3,6 +3,7 @@ package config
 import com.typesafe.config.ConfigFactory
 import org.peelframework.core.beans.data.{DataSet, ExperimentOutput}
 import org.peelframework.core.beans.experiment.ExperimentSuite
+import org.peelframework.dstat.beans.system.Dstat
 import org.peelframework.flink.beans.experiment.FlinkExperiment
 import org.peelframework.flink.beans.system.Flink
 import org.springframework.context.annotation._
@@ -58,6 +59,7 @@ class experiments extends ApplicationContextAware {
       config  = ConfigFactory.parseString(""),
       runs    = 3,
       runner  = ctx.getBean("flink-1.1-FLINK-3477", classOf[Flink]),
+      systems = Set(ctx.getBean("dstat-0.7.2", classOf[Dstat])),
       inputs  = Set(ctx.getBean(s"dataset.A.$distribution", classOf[DataSet])),
       outputs = Set(ctx.getBean(s"workload-A.output", classOf[ExperimentOutput]))
     )
