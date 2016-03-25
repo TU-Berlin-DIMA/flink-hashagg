@@ -33,7 +33,7 @@ object WorkloadA {
       .reduce((x, y) => (x._1, Math.max(x._2, y._2)), combineHint)
       .writeAsCsv(outputPath, writeMode = FileSystem.WriteMode.OVERWRITE)
 
-    env.execute("WorkloadA")
+    env.execute(s"WorkloadA[${combineHint.toString.toLowerCase}]")
   }
 
 }
