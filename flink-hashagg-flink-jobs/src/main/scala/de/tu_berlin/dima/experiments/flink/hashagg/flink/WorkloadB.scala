@@ -31,7 +31,7 @@ object WorkloadB {
       .reduce((x, y) => (x._1, if (x._2 > y._2) x._2 else y._2), combineHint)
       .writeAsCsv(outputPath)
 
-    env.execute("WorkloadB")
+    env.execute(s"WorkloadA[${combineHint.toString.toLowerCase}]")
   }
 
 }
