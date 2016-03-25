@@ -43,8 +43,8 @@ class experiments extends ApplicationContextAware {
   @Bean(name = Array("experiment.A"))
   def `wordcount.default`: ExperimentSuite = new ExperimentSuite(
     for {
-      strategy     <- Seq("hash", "sort")
       distribution <- Seq("uniform", "binomial", "zipf")
+      strategy     <- Seq("hash", "sort")
     } yield new FlinkExperiment(
       name    = s"experiment.A.$strategy.$distribution",
       command =
@@ -52,7 +52,7 @@ class experiments extends ApplicationContextAware {
            |-v -c de.tu_berlin.dima.experiments.flink.hashagg.flink.WorkloadA \\
            |$${app.path.apps}/flink-hashagg-flink-jobs-1.0-SNAPSHOT.jar       \\
            |$strategy                                                         \\
-           |$${system.hadoop-2.path.input}/dataset-A                          \\
+           |$${system.hadoop-2.path.input}/dataset-A.$distribution            \\
            |$${system.hadoop-2.path.output}/workload-A
         """.stripMargin.trim,
       config  = ConfigFactory.parseString(""),
