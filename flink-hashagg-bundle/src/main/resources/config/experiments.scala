@@ -57,7 +57,7 @@ class experiments extends ApplicationContextAware {
            |$${system.hadoop-2.path.output}/workload-A
         """.stripMargin.trim,
       config  = ConfigFactory.parseString(""),
-      runs    = 3,
+      runs    = 7,
       runner  = ctx.getBean("flink-1.1-FLINK-3477", classOf[Flink]),
       systems = Set(ctx.getBean("dstat-0.7.2", classOf[Dstat])),
       inputs  = Set(ctx.getBean(s"dataset.A.$distribution", classOf[DataSet])),
