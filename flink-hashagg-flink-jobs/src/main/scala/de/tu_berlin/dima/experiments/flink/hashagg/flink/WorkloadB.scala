@@ -2,6 +2,7 @@ package de.tu_berlin.dima.experiments.flink.hashagg.flink
 
 import org.apache.flink.api.common.operators.base.ReduceOperatorBase.CombineHint
 import org.apache.flink.api.scala._
+import org.apache.flink.core.fs.FileSystem
 
 /** Get the largest value per group based on lexicographic ordering. */
 object WorkloadB {
@@ -29,9 +30,9 @@ object WorkloadB {
       .readCsvFile[(Long, String)](inputPath)
       .groupBy(0)
       .reduce((x, y) => (x._1, if (x._2 > y._2) x._2 else y._2), combineHint)
-      .writeAsCsv(outputPath)
+      .writeAsCsv(outputPath, writeMode = FileSystem.WriteMode.OVERWRITE)
 
-    env.execute(s"WorkloadA[${combineHint.toString.toLowerCase}]")
+    env.execute(s"WorkloadB[${combineHint.toString.toLowerCase}]")
   }
 
 }
