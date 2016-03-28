@@ -11,7 +11,7 @@ import org.springframework.context.{ApplicationContext, ApplicationContextAware}
 
 /** Experiments definitions for the 'flink-hashagg' bundle. */
 @Configuration
-@ComponentScan( // Scan for annotated Peel components in the 'de.tu_berlin.dima.experiments.flink.hashagg' package
+@ComponentScan(// Scan for annotated Peel components in the 'de.tu_berlin.dima.experiments.flink.hashagg' package
   value = Array("de.tu_berlin.dima.experiments.flink.hashagg"),
   useDefaultFilters = false,
   includeFilters = Array[ComponentScan.Filter](
@@ -25,8 +25,8 @@ import org.springframework.context.{ApplicationContext, ApplicationContextAware}
 ))
 @Import(value = Array(
   classOf[org.peelframework.extensions], // base system beans
-  classOf[config.fixtures.systems],      // custom system beans
-  classOf[config.fixtures.datasets]      // dataset beans
+  classOf[config.fixtures.systems], // custom system beans
+  classOf[config.fixtures.datasets] // dataset beans
 ))
 class experiments extends ApplicationContextAware {
 
@@ -46,11 +46,11 @@ class experiments extends ApplicationContextAware {
   @Bean(name = Array("experiment.A"))
   def `experiment.A"`: ExperimentSuite = new ExperimentSuite(
     for {
-      distribution <- Seq("uniform", "binomial", "zipf")
-      strategy     <- Seq("hash", "sort")
+      distribution /**/ <- Seq("uniform", "binomial", "zipf")
+      strategy /*    */ <- Seq("hash", "sort")
     } yield new FlinkExperiment(
-      name    = s"experiment.A.$strategy.$distribution",
-      command =
+      name /*   */ = s"experiment.A.$strategy.$distribution",
+      command /**/ =
         s"""
            |-v -c de.tu_berlin.dima.experiments.flink.hashagg.flink.WorkloadA \\
            |$${app.path.apps}/flink-hashagg-flink-jobs-1.0-SNAPSHOT.jar       \\
@@ -58,12 +58,12 @@ class experiments extends ApplicationContextAware {
            |$${system.hadoop-2.path.input}/dataset-A.$distribution            \\
            |$${system.hadoop-2.path.output}/workload-A
         """.stripMargin.trim,
-      config  = ConfigFactory.parseString(""),
-      runs    = runs,
-      runner  = ctx.getBean("flink-1.1-FLINK-3477", classOf[Flink]),
-      systems = Set(ctx.getBean("dstat-0.7.2", classOf[Dstat])),
-      inputs  = Set(ctx.getBean(s"dataset.A.$distribution", classOf[DataSet])),
-      outputs = Set(ctx.getBean(s"workload-A.output", classOf[ExperimentOutput]))
+      config /* */ = ConfigFactory.parseString(""),
+      runs /*   */ = runs,
+      runner /* */ = ctx.getBean("flink-1.1-FLINK-3477", classOf[Flink]),
+      systems /**/ = Set(ctx.getBean("dstat-0.7.2", classOf[Dstat])),
+      inputs /* */ = Set(ctx.getBean(s"dataset.A.$distribution", classOf[DataSet])),
+      outputs /**/ = Set(ctx.getBean(s"workload-A.output", classOf[ExperimentOutput]))
     )
   )
 
@@ -71,10 +71,10 @@ class experiments extends ApplicationContextAware {
   def `experiment.B`: ExperimentSuite = new ExperimentSuite(
     for {
       distribution <- Seq("uniform", "binomial", "zipf")
-      strategy     <- Seq("hash", "sort")
+      strategy <- Seq("hash", "sort")
     } yield new FlinkExperiment(
-      name    = s"experiment.B.$strategy.$distribution",
-      command =
+      name /*   */ = s"experiment.B.$strategy.$distribution",
+      command /**/ =
         s"""
            |-v -c de.tu_berlin.dima.experiments.flink.hashagg.flink.WorkloadB \\
            |$${app.path.apps}/flink-hashagg-flink-jobs-1.0-SNAPSHOT.jar       \\
@@ -82,12 +82,12 @@ class experiments extends ApplicationContextAware {
            |$${system.hadoop-2.path.input}/dataset-A.$distribution            \\
            |$${system.hadoop-2.path.output}/workload-B
         """.stripMargin.trim,
-      config  = ConfigFactory.parseString(""),
-      runs    = runs,
-      runner  = ctx.getBean("flink-1.1-FLINK-3477", classOf[Flink]),
-      systems = Set(ctx.getBean("dstat-0.7.2", classOf[Dstat])),
-      inputs  = Set(ctx.getBean(s"dataset.A.$distribution", classOf[DataSet])),
-      outputs = Set(ctx.getBean(s"workload-B.output", classOf[ExperimentOutput]))
+      config /* */ = ConfigFactory.parseString(""),
+      runs /*   */ = runs,
+      runner /* */ = ctx.getBean("flink-1.1-FLINK-3477", classOf[Flink]),
+      systems /**/ = Set(ctx.getBean("dstat-0.7.2", classOf[Dstat])),
+      inputs /* */ = Set(ctx.getBean(s"dataset.A.$distribution", classOf[DataSet])),
+      outputs /**/ = Set(ctx.getBean(s"workload-B.output", classOf[ExperimentOutput]))
     )
   )
 }
