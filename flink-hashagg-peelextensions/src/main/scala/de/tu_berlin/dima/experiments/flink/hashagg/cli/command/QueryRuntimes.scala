@@ -18,8 +18,6 @@ class QueryRuntimes extends Command {
 
   import scala.language.postfixOps
 
-  override val name = "query:runtimes"
-
   override val help = "query the database for the runtimes of a particular experiment."
 
   override def register(parser: Subparser) = {
@@ -108,17 +106,6 @@ class QueryRuntimes extends Command {
       }
 
       System.out.println("-" * colLength * cols.size)
-
-      val z = runtimes
-      //      logger.info(s"---------------------------------------------------------------------------------------------------------------")
-      //      logger.info(s"| RUNTIME RESULTS FOR '$suite' ${" " * (84 - suite.length)} |")
-      //      logger.info(s"---------------------------------------------------------------------------------------------------------------")
-      //      logger.info(s"| name                           | name                                |        min |        max |     median |")
-      //      logger.info(s"---------------------------------------------------------------------------------------------------------------")
-      //      for ((suite, name, min, max, median) <- runtimes) {
-      //        logger.info(f"| $suite%-30s | $name%-35s | $min%10d | $max%10d | $median%10d | ")
-      //      }
-      //      logger.info(s"---------------------------------------------------------------------------------------------------------------")
     }
     catch {
       case e: Throwable =>
