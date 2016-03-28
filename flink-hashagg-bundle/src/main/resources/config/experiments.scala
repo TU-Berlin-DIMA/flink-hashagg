@@ -43,51 +43,73 @@ class experiments extends ApplicationContextAware {
   // Experiments
   // ---------------------------------------------------
 
-  @Bean(name = Array("experiment.A"))
-  def `experiment.A"`: ExperimentSuite = new ExperimentSuite(
+  @Bean(name = Array("ex-A"))
+  def `ex-A`: ExperimentSuite = new ExperimentSuite(
     for {
       distribution /**/ <- Seq("uniform", "binomial", "zipf")
       strategy /*    */ <- Seq("hash", "sort")
     } yield new FlinkExperiment(
-      name /*   */ = s"experiment.A.$strategy.$distribution",
+      name /*   */ = s"ds-A.$distribution.wl-A.$strategy",
       command /**/ =
         s"""
            |-v -c de.tu_berlin.dima.experiments.flink.hashagg.flink.WorkloadA \\
            |$${app.path.apps}/flink-hashagg-flink-jobs-1.0-SNAPSHOT.jar       \\
            |$strategy                                                         \\
-           |$${system.hadoop-2.path.input}/dataset-A.$distribution            \\
-           |$${system.hadoop-2.path.output}/workload-A
+           |$${system.hadoop-2.path.input}/ds-A.$distribution                 \\
+           |$${system.hadoop-2.path.output}/wl-A
         """.stripMargin.trim,
-      config /* */ = ConfigFactory.parseString(""),
+      config /* */ = ConfigFactory.parseString(
+        s"""
+           |system.flink.config.yaml {
+           |  # 1 GiB of memory
+           |  taskmanager.heap.mb = 1024
+           |  # 0.5 * 1 = 0.5 GiB will be managed
+           |  taskmanager.memory.fraction = 0.5
+           |  # 16384 * 16384 = 0.25 GiB memory for network
+           |  taskmanager.network.numberOfBuffers = 16384
+           |  taskmanager.network.bufferSizeInBytes = 16384
+           |}
+         """.stripMargin),
       runs /*   */ = runs,
       runner /* */ = ctx.getBean("flink-1.1-FLINK-3477", classOf[Flink]),
       systems /**/ = Set(ctx.getBean("dstat-0.7.2", classOf[Dstat])),
-      inputs /* */ = Set(ctx.getBean(s"dataset.A.$distribution", classOf[DataSet])),
-      outputs /**/ = Set(ctx.getBean(s"workload-A.output", classOf[ExperimentOutput]))
+      inputs /* */ = Set(ctx.getBean(s"ds-A.$distribution", classOf[DataSet])),
+      outputs /**/ = Set(ctx.getBean(s"wl-A.output", classOf[ExperimentOutput]))
     )
   )
 
-  @Bean(name = Array("experiment.B"))
-  def `experiment.B`: ExperimentSuite = new ExperimentSuite(
+  @Bean(name = Array("ex-B"))
+  def `ex-B`: ExperimentSuite = new ExperimentSuite(
     for {
       distribution <- Seq("uniform", "binomial", "zipf")
       strategy <- Seq("hash", "sort")
     } yield new FlinkExperiment(
-      name /*   */ = s"experiment.B.$strategy.$distribution",
+      name /*   */ = s"ds-A.$distribution.wl-B.$strategy",
       command /**/ =
         s"""
            |-v -c de.tu_berlin.dima.experiments.flink.hashagg.flink.WorkloadB \\
            |$${app.path.apps}/flink-hashagg-flink-jobs-1.0-SNAPSHOT.jar       \\
            |$strategy                                                         \\
-           |$${system.hadoop-2.path.input}/dataset-A.$distribution            \\
-           |$${system.hadoop-2.path.output}/workload-B
+           |$${system.hadoop-2.path.input}/ds-A.$distribution                 \\
+           |$${system.hadoop-2.path.output}/wl-B
         """.stripMargin.trim,
-      config /* */ = ConfigFactory.parseString(""),
+      config /* */ = ConfigFactory.parseString(
+        s"""
+           |system.flink.config.yaml {
+           |  # 1 GiB of memory
+           |  taskmanager.heap.mb = 1024
+           |  # 0.5 * 1 = 0.5 GiB will be managed
+           |  taskmanager.memory.fraction = 0.5
+           |  # 16384 * 16384 = 0.25 GiB memory for network
+           |  taskmanager.network.numberOfBuffers = 16384
+           |  taskmanager.network.bufferSizeInBytes = 16384
+           |}
+         """.stripMargin),
       runs /*   */ = runs,
       runner /* */ = ctx.getBean("flink-1.1-FLINK-3477", classOf[Flink]),
       systems /**/ = Set(ctx.getBean("dstat-0.7.2", classOf[Dstat])),
-      inputs /* */ = Set(ctx.getBean(s"dataset.A.$distribution", classOf[DataSet])),
-      outputs /**/ = Set(ctx.getBean(s"workload-B.output", classOf[ExperimentOutput]))
+      inputs /* */ = Set(ctx.getBean(s"ds-A.$distribution", classOf[DataSet])),
+      outputs /**/ = Set(ctx.getBean(s"wl-B.output", classOf[ExperimentOutput]))
     )
   )
 }
