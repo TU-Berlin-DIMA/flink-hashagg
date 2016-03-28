@@ -18,23 +18,16 @@ class CombinerMetricsExtractor(
   override val appContext: ApplicationContext,
   override val writer: ActorRef) extends EventExtractor[Line] {
 
-  import CombinerMetricsExtractor.{LogEntry, NumEmissions, NumEmittedRecords}
+  import CombinerMetricsExtractor.{LogEntry, CombinerMetricPattern}
 
   final def receive: Receive = {
-    case Line(LogEntry(_, NumEmissions(name, number, total, numEmissions))) =>
+    case Line(LogEntry(_, CombinerMetricPattern(taskName, number, total, metricName, value))) =>
       writer ! ExperimentEvent(
         experimentRunID /**/ = run.id,
-        name /*           */ = 'num_emissions,
-        task /*           */ = Some(name),
+        name /*           */ = Symbol(metricName),
+        task /*           */ = Some(taskName),
         taskInstance /*   */ = Some(number.toInt),
-        vLong /*          */ = Some(numEmissions.toLong))
-    case Line(LogEntry(_, NumEmittedRecords(name, number, total, numEmittedRecords))) =>
-      writer ! ExperimentEvent(
-        experimentRunID /**/ = run.id,
-        name /*           */ = 'num_emitted_records,
-        task /*           */ = Some(name),
-        taskInstance /*   */ = Some(number.toInt),
-        vLong /*          */ = Some(numEmittedRecords.toLong))
+        vLong /*          */ = Some(value.toLong))
   }
 }
 
@@ -44,8 +37,7 @@ object CombinerMetricsExtractor extends EventExtractorCompanion with PatternBase
 
   val TMLog = """flink-(.+)-taskmanager-\d+-(.+)\.log""".r
   val LogEntry = """([0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2},[0-9]{3}).* - (.+)""".r
-  val NumEmissions = """(.+) \((\d+)/(\d+)\) numEmissions: (\d+)""".r
-  val NumEmittedRecords = """(.+) \((\d+)/(\d+)\) numEmittedRecords: (\d+)""".r
+  val CombinerMetricPattern = """(.+) \((\d+)/(\d+)\) (\w+): (\d+)""".r
 
   /** A prefix fore the relative file that needs to match. **/
   override val prefix: String = {
