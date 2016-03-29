@@ -4,8 +4,8 @@ import org.apache.flink.api.common.operators.base.ReduceOperatorBase.CombineHint
 import org.apache.flink.api.scala._
 import org.apache.flink.core.fs.FileSystem
 
-/** Get the largest value per group based on lexicographic ordering. */
-object WorkloadB {
+/** Compute the largest length per group. */
+object WorkloadX {
 
   def main(args: Array[String]) {
     if (args.length != 3) {
@@ -28,11 +28,12 @@ object WorkloadB {
 
     env
       .readCsvFile[(Long, String)](inputPath)
+      .map{kv => (kv._1, kv._2.length)}
       .groupBy(0)
-      .reduce((x, y) => (x._1, if (x._2 > y._2) x._2 else y._2), combineHint)
+      .reduce((x, y) => (x._1, Math.max(x._2, y._2)), combineHint)
       .writeAsCsv(outputPath, writeMode = FileSystem.WriteMode.OVERWRITE)
 
-    env.execute(s"WorkloadB[${combineHint.toString.toLowerCase}]")
+    env.execute(s"WorkloadX[${combineHint.toString.toLowerCase}]")
   }
 
 }
