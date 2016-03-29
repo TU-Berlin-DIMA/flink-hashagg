@@ -43,6 +43,13 @@
             <groupId>org.peelframework</groupId>
             <artifactId>peel-extensions</artifactId>
         </dependency>
+
+        <!-- Plotting -->
+        <dependency>
+            <groupId>org.sameersingh.scalaplot</groupId>
+            <artifactId>scalaplot</artifactId>
+            <version>0.0.4</version>
+        </dependency>
     </dependencies>
 
     <build>
