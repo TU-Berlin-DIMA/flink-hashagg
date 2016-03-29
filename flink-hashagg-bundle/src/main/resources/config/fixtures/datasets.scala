@@ -26,63 +26,85 @@ class datasets extends ApplicationContextAware {
   // Data Generators
   // ---------------------------------------------------
 
-  def `dg-A`(distribution: String): FlinkJob = new FlinkJob(
+  def dg(name: String, tuplesPerTask: Long, keyCardinality: Int, keyDist: String): FlinkJob = new FlinkJob(
     runner /* */ = ctx.getBean("flink-1.1-FLINK-3477", classOf[Flink]),
     command /**/ =
       s"""
          |-v -c de.tu_berlin.dima.experiments.flink.hashagg.datagen.flink.DatasetAGenerator  \\
          |$${app.path.datagens}/flink-hashagg-datagens-1.0-SNAPSHOT.jar                      \\
          |$${system.default.config.parallelism.total}                                        \\
-         |40000000                                                                           \\
-         |400000                                                                             \\
-         |$distribution                                                                      \\
-         |$${system.hadoop-2.path.input}/ds-A.${distribution.split('[')(0).toLowerCase}
+         |$tuplesPerTask                                                                     \\
+         |$keyCardinality                                                                    \\
+         |$keyDist                                                                           \\
+         |$${system.hadoop-2.path.input}/$name.${keyDist.split('[')(0).toLowerCase}
       """.stripMargin.trim
   )
-
-  @Bean(name = Array("dg-A.uniform"))
-  def `dg-A.uniform`: FlinkJob =
-    `dg-A`("Uniform")
-
-  @Bean(name = Array("dg-A.binomial"))
-  def `dg-A.binomial`: FlinkJob =
-    `dg-A`("Binomial[0.5]")
-
-  @Bean(name = Array("dg-A.zipf"))
-  def `dg-A.zipf`: FlinkJob =
-    `dg-A`("Zipf[1]")
 
   // ---------------------------------------------------
   // Data Sets
   // ---------------------------------------------------
 
-  def `ds-A`(distribution: String): DataSet = new GeneratedDataSet(
-    src /**/ = ctx.getBean(s"dg-A.$distribution", classOf[FlinkJob]),
-    dst /**/ = s"$${system.hadoop-2.path.input}/ds-A.$distribution",
+  def ds(name: String, tuplesPerTask: Long, keyCardinality: Int, keyDist: String): DataSet = new GeneratedDataSet(
+    src /**/ = dg(name, tuplesPerTask, keyCardinality, keyDist),
+    dst /**/ = s"$${system.hadoop-2.path.input}/$name.$keyDist",
     fs /* */ = ctx.getBean("hdfs-2.7.1", classOf[HDFS2])
   )
 
-  @Bean(name = Array("ds-A.uniform"))
-  def `ds-A.uniform`: DataSet =
-    `ds-A`("uniform")
+  // ds-A1
 
-  @Bean(name = Array("ds-A.binomial"))
-  def `ds-A.binomial`: DataSet =
-    `ds-A`("binomial")
+  @Bean(name = Array("ds-A1.uniform"))
+  def `ds-A1.uniform`: DataSet =
+    ds("ds-A1", 40000000L, 40000, "Uniform")
 
-  @Bean(name = Array("ds-A.zipf"))
-  def `ds-A.zipf`: DataSet =
-    `ds-A`("zipf")
+  @Bean(name = Array("ds-A1.binomial"))
+  def `ds-A1.binomial`: DataSet =
+    ds("ds-A1", 40000000L, 40000, "Binomial[0.5]")
 
-  @Bean(name = Array("wl-A.output"))
-  def `wl-A.output`: ExperimentOutput = new ExperimentOutput(
-    path /**/ = "${system.hadoop-2.path.output}/wl-A",
+  @Bean(name = Array("ds-A1.zipf"))
+  def `ds-A1.zipf`: DataSet =
+    ds("ds-A1", 40000000L, 40000, "Zipf[1]")
+
+  // ds-A2
+
+  @Bean(name = Array("ds-A2.uniform"))
+  def `ds-A2.uniform`: DataSet =
+    ds("ds-A2", 40000000L, 400000, "Uniform")
+
+  @Bean(name = Array("ds-A2.binomial"))
+  def `ds-A2.binomial`: DataSet =
+    ds("ds-A2", 40000000L, 400000, "Binomial[0.5]")
+
+  @Bean(name = Array("ds-A2.zipf"))
+  def `ds-A2.zipf`: DataSet =
+    ds("ds-A2", 40000000L, 400000, "Zipf[1]")
+
+  // ds-A3
+
+  @Bean(name = Array("ds-A3.uniform"))
+  def `ds-A3.uniform`: DataSet =
+    ds("ds-A3", 40000000L, 4000000, "Uniform")
+
+  @Bean(name = Array("ds-A3.binomial"))
+  def `ds-A3.binomial`: DataSet =
+    ds("ds-A3", 40000000L, 4000000, "Binomial[0.5]")
+
+  @Bean(name = Array("ds-A3.zipf"))
+  def `ds-A3.zipf`: DataSet =
+    ds("ds-A3", 40000000L, 4000000, "Zipf[1]")
+
+  // ---------------------------------------------------
+  // Output Paths
+  // ---------------------------------------------------
+
+  @Bean(name = Array("wl-X.output"))
+  def `wl-X.output`: ExperimentOutput = new ExperimentOutput(
+    path /**/ = "${system.hadoop-2.path.output}/wl-X",
     fs /*  */ = ctx.getBean("hdfs-2.7.1", classOf[HDFS2])
   )
 
-  @Bean(name = Array("wl-B.output"))
-  def `wl-B.output`: ExperimentOutput = new ExperimentOutput(
-    path /**/ = "${system.hadoop-2.path.output}/wl-B",
+  @Bean(name = Array("wl-Y.output"))
+  def `wl-Y.output`: ExperimentOutput = new ExperimentOutput(
+    path /**/ = "${system.hadoop-2.path.output}/wl-Y",
     fs /*  */ = ctx.getBean("hdfs-2.7.1", classOf[HDFS2])
   )
 }

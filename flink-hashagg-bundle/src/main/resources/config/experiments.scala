@@ -30,7 +30,7 @@ import org.springframework.context.{ApplicationContext, ApplicationContextAware}
 ))
 class experiments extends ApplicationContextAware {
 
-  val runs = 7
+  val runs = 5
 
   /* The enclosing application context. */
   var ctx: ApplicationContext = null
@@ -43,20 +43,19 @@ class experiments extends ApplicationContextAware {
   // Experiments
   // ---------------------------------------------------
 
-  @Bean(name = Array("ex-A"))
-  def `ex-A`: ExperimentSuite = new ExperimentSuite(
+  def ex(name: String, ds: String, wl: String): ExperimentSuite = new ExperimentSuite(
     for {
       distribution /**/ <- Seq("uniform", "binomial", "zipf")
       strategy /*    */ <- Seq("hash", "sort")
     } yield new FlinkExperiment(
-      name /*   */ = s"ds-A.$distribution.wl-A.$strategy",
+      name /*   */ = s"$ds.$distribution.$wl.$strategy",
       command /**/ =
         s"""
-           |-v -c de.tu_berlin.dima.experiments.flink.hashagg.flink.WorkloadA \\
-           |$${app.path.apps}/flink-hashagg-flink-jobs-1.0-SNAPSHOT.jar       \\
-           |$strategy                                                         \\
-           |$${system.hadoop-2.path.input}/ds-A.$distribution                 \\
-           |$${system.hadoop-2.path.output}/wl-A
+           |-v -c de.tu_berlin.dima.experiments.flink.hashagg.flink.Workload${wl.split('-')(1)} \\
+           |$${app.path.apps}/flink-hashagg-flink-jobs-1.0-SNAPSHOT.jar                         \\
+           |$strategy                                                                           \\
+           |$${system.hadoop-2.path.input}/$ds.$distribution                                    \\
+           |$${system.hadoop-2.path.output}/$wl
         """.stripMargin.trim,
       config /* */ = ConfigFactory.parseString(
         s"""
@@ -73,43 +72,34 @@ class experiments extends ApplicationContextAware {
       runs /*   */ = runs,
       runner /* */ = ctx.getBean("flink-1.1-FLINK-3477", classOf[Flink]),
       systems /**/ = Set(ctx.getBean("dstat-0.7.2", classOf[Dstat])),
-      inputs /* */ = Set(ctx.getBean(s"ds-A.$distribution", classOf[DataSet])),
-      outputs /**/ = Set(ctx.getBean(s"wl-A.output", classOf[ExperimentOutput]))
+      inputs /* */ = Set(ctx.getBean(s"$ds.$distribution", classOf[DataSet])),
+      outputs /**/ = Set(ctx.getBean(s"$wl.output", classOf[ExperimentOutput]))
     )
   )
 
-  @Bean(name = Array("ex-B"))
-  def `ex-B`: ExperimentSuite = new ExperimentSuite(
-    for {
-      distribution <- Seq("uniform", "binomial", "zipf")
-      strategy <- Seq("hash", "sort")
-    } yield new FlinkExperiment(
-      name /*   */ = s"ds-A.$distribution.wl-B.$strategy",
-      command /**/ =
-        s"""
-           |-v -c de.tu_berlin.dima.experiments.flink.hashagg.flink.WorkloadB \\
-           |$${app.path.apps}/flink-hashagg-flink-jobs-1.0-SNAPSHOT.jar       \\
-           |$strategy                                                         \\
-           |$${system.hadoop-2.path.input}/ds-A.$distribution                 \\
-           |$${system.hadoop-2.path.output}/wl-B
-        """.stripMargin.trim,
-      config /* */ = ConfigFactory.parseString(
-        s"""
-           |system.flink.config.yaml {
-           |  # 1 GiB of memory
-           |  taskmanager.heap.mb = 1024
-           |  # 0.5 * 1 = 0.5 GiB will be managed
-           |  taskmanager.memory.fraction = 0.5
-           |  # 16384 * 16384 = 0.25 GiB memory for network
-           |  taskmanager.network.numberOfBuffers = 16384
-           |  taskmanager.network.bufferSizeInBytes = 16384
-           |}
-         """.stripMargin),
-      runs /*   */ = runs,
-      runner /* */ = ctx.getBean("flink-1.1-FLINK-3477", classOf[Flink]),
-      systems /**/ = Set(ctx.getBean("dstat-0.7.2", classOf[Dstat])),
-      inputs /* */ = Set(ctx.getBean(s"ds-A.$distribution", classOf[DataSet])),
-      outputs /**/ = Set(ctx.getBean(s"wl-B.output", classOf[ExperimentOutput]))
-    )
-  )
+  // { A1, A2, A3 } × { X, Y }
+
+  @Bean(name = Array("ex-A1.X"))
+  def `ex-A1.X`: ExperimentSuite =
+    ex(name = "ex-A1.X", "ds-A1", "wl-X")
+
+  @Bean(name = Array("ex-A1.Y"))
+  def `ex-A1.Y`: ExperimentSuite =
+    ex(name = "ex-A1.Y", "ds-A1", "wl-Y")
+
+  @Bean(name = Array("ex-A2.X"))
+  def `ex-A2.X`: ExperimentSuite =
+    ex(name = "ex-A2.X", "ds-A2", "wl-X")
+
+  @Bean(name = Array("ex-A2.Y"))
+  def `ex-A2.Y`: ExperimentSuite =
+    ex(name = "ex-A2.Y", "ds-A2", "wl-Y")
+
+  @Bean(name = Array("ex-A3.X"))
+  def `ex-A3.X`: ExperimentSuite =
+    ex(name = "ex-A3.X", "ds-A3", "wl-X")
+
+  @Bean(name = Array("ex-A3.Y"))
+  def `ex-A3.Y`: ExperimentSuite =
+    ex(name = "ex-A3.Y", "ds-A3", "wl-Y")
 }
