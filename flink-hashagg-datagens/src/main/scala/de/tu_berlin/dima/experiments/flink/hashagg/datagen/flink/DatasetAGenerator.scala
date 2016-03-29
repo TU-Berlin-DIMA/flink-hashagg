@@ -6,52 +6,64 @@ import org.apache.flink.api.scala._
 import org.apache.flink.core.fs.FileSystem
 import org.apache.flink.util.NumberSequenceIterator
 
+/** Data generator for `Dataset A`.
+  *
+  * The generator maps a PRNG string to a pseudo-random `(key, value)` sequence as follows.
+  *
+  * The first fragment of size `SIZE_OF_DICT * Dictionary.MAX_LENGTH` is mapped to the finite values dictionary.
+  * The second fragment of size `numberOfPairs * 2` is mapped to the actual `(key, value)` pairs.
+  *
+  * Each pair thereby consumes exactly two PRNG numbers - the first is used to sample the key, and the second the value.
+  */
 object DatasetAGenerator {
 
-  val SEED = 0xC00FFEE
-  val SIZE_OF_DICTIONARY = 1000000
+  val SIZE_OF_DICT /**/ = 1000000
 
-  val valDistribution = DiscreteUniform(SIZE_OF_DICTIONARY)
+  val SEED_ROOT /*   */ = 0xC00FFEE
+  val SEED_DICT /*   */ = SEED_ROOT
+  val SEED_PAIR /*   */ = SEED_ROOT + SIZE_OF_DICT * Dictionary.MAX_LENGTH
+
+  val valDist /*     */ = DiscreteUniform(SIZE_OF_DICT)
 
   def main(args: Array[String]): Unit = {
 
     if (args.length != 5) {
-      Console.err.println("Usage: <jar> numberOfTasks tuplesPerTask key-cardinality key-distribution[params] outputPath")
+      Console.err.println("Usage: <jar> numberOfTasks tuplesPerTask keyCardinality keyDist[params] outputPath")
       System.exit(-1)
     }
 
-    val numberOfTasks   = args(0).toInt
-    val tuplesPerTask   = args(1).toLong
-    val keyCardinality  = args(2).toInt
-    val keyDistribution = parseDist(keyCardinality, args(3))
-    val outputPath      = args(4)
+    val numberOfTasks /*  */ = args(0).toInt
+    val tuplesPerTask /*  */ = args(1).toLong
+    val keyCardinality /* */ = args(2).toInt
+    val keyDist /*        */ = parseDist(keyCardinality, args(3))
+    val outputPath /*     */ = args(4)
 
-    val numberOfPairs   = numberOfTasks * tuplesPerTask
+    val numberOfPairs /*  */ = numberOfTasks * tuplesPerTask
 
-    val environment = ExecutionEnvironment.getExecutionEnvironment
+    val environment /*    */ = ExecutionEnvironment.getExecutionEnvironment
 
     environment
       // create a sequence [1 .. N] to create N words
       .fromParallelCollection(new NumberSequenceIterator(1, numberOfPairs))
       // set up workers
       .setParallelism(numberOfTasks)
-      // map every n <- [1 .. N] to a random word sampled from a word list and a key
+      // map every n <- [1 .. N] to a random word from the dictionary and a random key
       .map(i => {
-        val r = new RanHash(SEED + SIZE_OF_DICTIONARY * Dictionary.MAX_LENGTH + 2 * i)
-        val k = keyDistribution.sample(r.next())
-        val v = new Dictionary(SEED, SIZE_OF_DICTIONARY).word(valDistribution.sample(r.next()))
+        val r = new RanHash(SEED_PAIR + i * 2)
+        val k = keyDist.sample(r.next())
+        val v = Dictionary(SEED_DICT, SIZE_OF_DICT)(valDist.sample(r.next()))
         s"$k,$v"
       })
       // write result to file
       .writeAsText(outputPath, FileSystem.WriteMode.OVERWRITE)
 
-    environment.execute(s"KeyValuePairsGenerator[$numberOfPairs][$keyCardinality][${args(3)}]")
+    environment.execute(s"DatasetAGenerator[E=$tuplesPerTask][K=$keyCardinality][P=${args(3)}]")
   }
 
   object Patterns {
     val DiscreteUniform = """(Uniform)""".r
-    val Binomial = """Binomial\[(1|1\.0|0\.\d+)\]""".r
-    val Zipf = """Zipf\[(\d+(?:\.\d+)?)\]""".r
+    val Binomial /*  */ = """Binomial\[(1|1\.0|0\.\d+)\]""".r
+    val Zipf /*      */ = """Zipf\[(\d+(?:\.\d+)?)\]""".r
   }
 
   def parseDist(card: Int, s: String): DiscreteDistribution = s match {
