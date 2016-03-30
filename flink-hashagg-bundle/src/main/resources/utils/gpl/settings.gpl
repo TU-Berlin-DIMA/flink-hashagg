@@ -14,3 +14,6 @@ set style fill solid
 # sizing
 set size ratio 0.5
 set boxwidth 0.5
+
+# disable exponential notation for y axis
+set format y "%.0f"
