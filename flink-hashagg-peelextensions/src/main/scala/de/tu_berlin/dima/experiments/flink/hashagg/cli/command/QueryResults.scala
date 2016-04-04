@@ -48,7 +48,7 @@ class QueryResults extends Command {
 
     // option defaults
     parser.setDefault("app.db.connection", "h2")
-    parser.setDefault("app.output.mode", "table")
+    parser.setDefault("app.output.mode", "plots")
   }
 
   override def configure(ns: Namespace) = {
