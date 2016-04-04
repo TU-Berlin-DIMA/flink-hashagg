@@ -52,7 +52,7 @@ class experiments extends ApplicationContextAware {
       command /**/ =
         s"""
            |-v -c de.tu_berlin.dima.experiments.flink.hashagg.flink.Workload${wl.split('-')(1)} \\
-           |$${app.path.apps}/flink-hashagg-flink-jobs-1.0-SNAPSHOT.jar                         \\
+           |$${app.path.apps}/flink-hashagg-flink-jobs-1.0.0.jar                                \\
            |$strategy                                                                           \\
            |$${system.hadoop-2.path.input}/$ds.$distribution                                    \\
            |$${system.hadoop-2.path.output}/$wl

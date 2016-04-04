@@ -31,7 +31,7 @@ class datasets extends ApplicationContextAware {
     command /**/ =
       s"""
          |-v -c de.tu_berlin.dima.experiments.flink.hashagg.datagen.flink.DatasetAGenerator  \\
-         |$${app.path.datagens}/flink-hashagg-datagens-1.0-SNAPSHOT.jar                      \\
+         |$${app.path.datagens}/flink-hashagg-datagens-1.0.0.jar                             \\
          |$${system.default.config.parallelism.total}                                        \\
          |$tuplesPerTask                                                                     \\
          |$keyCardinality                                                                    \\
