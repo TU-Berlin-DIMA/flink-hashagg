@@ -117,6 +117,20 @@
             <fileMode>0644</fileMode>
             <filtered>true</filtered>
         </file>
+        <!-- copy the LICENSE file -->
+        <file>
+            <source>../LICENSE</source>
+            <destName>LICENSE</destName>
+            <fileMode>0644</fileMode>
+            <filtered>false</filtered>
+        </file>
+        <!-- copy the NOTICE file -->
+        <file>
+            <source>../NOTICE</source>
+            <destName>NOTICE</destName>
+            <fileMode>0644</fileMode>
+            <filtered>false</filtered>
+        </file>
     </files>
 
 </assembly>
