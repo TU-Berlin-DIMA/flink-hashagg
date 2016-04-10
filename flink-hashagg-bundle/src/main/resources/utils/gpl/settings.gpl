@@ -1,8 +1,8 @@
 # SVG output
-set terminal svg size 500, 400 fname 'arial' fsize 10
+set terminal svg size 500, 300 fname 'arial' fsize 10
 
 # PNG output
-# set terminal pngcairo size 500,400 enhanced font 'arial,10'
+# set terminal pngcairo size 500, 300 enhanced font 'arial,10'
 
 # line styles
 set style line 1 lc rgb "#6C9AA7"
@@ -10,6 +10,11 @@ set style line 2 lc rgb "#FDA0A2"
 set style line 3 lc rgb "#FFD1A2"
 set style line 4 lc rgb "#8AD386"
 set style fill solid
+
+# fixed margin
+
+set lmargin 14
+
 
 # sizing
 set size ratio 0.5
